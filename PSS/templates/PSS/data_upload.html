@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'PSS/style.css' %}" />
+</head>
+<body>
+    <p style="font-size: 50px;">Upload your file which contains the data for the PSS monitoring system:</p>
+
+    <form action="{% url 'PSS:data-upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input style="font-size: 30px; position: relative; left: 20px;" type="file" id="dataFile" name="dataFile">
+        <input style="font-size: 30px;" type="submit" value="Upload">
+    </form>
+
+    {% for i in timelist %}
+    <p>{{i}}</p>
+    {% endfor %}
+
+</body>
+</html>

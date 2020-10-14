@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Login Page</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'PSS/loginstyle.css' %}" />
+</head>
+<body>
+    <div class="loginbox">
+        <h1>LOGIN</h1>
+        <form class="box" action="" method="POST">
+            {% csrf_token %}
+            <p>Username</p>
+            <input type="text" name="username" placeholder="Enter Username">
+            <p>Password</p>
+            <input type="password" name="password" placeholder="Enter Password">
+            <input type="submit" name="submit" value="Login">
+            <a id="forgetPass" href="#">Forget your password?</a><br>
+            <hr>
+            <p id="or" class="or">OR</p>
+            <a id="signup" href="{%url 'PSS:signup'%}">Don't have an account? Sign up.</a>
+        </form>
+    </div>
+</body>
+</html>

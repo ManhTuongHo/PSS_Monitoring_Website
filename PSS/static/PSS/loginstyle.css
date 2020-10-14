@@ -1,0 +1,92 @@
+body{
+margin:0;
+padding:0;
+font-family: sans-serif;
+background: url("images/solarfarm.jpg");
+background-size: cover;
+}
+
+.loginbox{
+width: 400px;
+height: 520px;
+padding: 20px;
+position: relative;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: #FBFCFC;
+}
+
+h1{
+margin-bottom: 20px;
+text-align: center;
+font-size: 28px;
+}
+
+.box p{
+margin: 0;
+padding: 0;
+font-weight: bold;
+font-size: 18px;
+}
+
+.box input[type = "text"], .box input[type = "password"]{
+    width: 100%;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 2px solid #2C3E50;
+    background: transparent;
+    height: 40px;
+    margin: 20px auto;
+    font-size: 18px;
+}
+
+.box input[type = "submit"]{
+    width: 100px;
+    height: 30px;
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -0%);
+    margin-bottom: 20px;
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+#forgetPass{
+ position: absolute;
+ top: 350px;
+ left: 50%;
+ transform:  translate(-50%);
+}
+
+hr{
+width: 90%;
+position: absolute;
+top: 400px;
+left:50%;
+transform: translate(-50%);
+}
+
+#or{
+position: absolute;
+background: #FBFCFC;
+width: 30px;
+top: 400px;
+left:50%;
+transform: translate(-50%);
+font-weight: lighter;
+}
+
+ #signup{
+ font-size: 18px;
+ width: 100%;
+ position: absolute;
+ top: 450px;
+ left: 50%;
+ text-align: center;
+ transform:translate(-50%);
+}
+
+
+

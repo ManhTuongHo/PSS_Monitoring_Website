@@ -1,0 +1,55 @@
+{% extends 'music/music_base.html' %}
+
+{%block code%}
+<div class="container-fluid">
+    <!--Albbums-->
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{user.username}}'s Album</h3>
+        </div>
+    {% if object_list %}
+        {% for album in object_list %}
+            <div class="col-sm-4 col-lg-2">
+                <div class="thumbnail">
+                    <a href="{% url 'music:detail' album.id %}">
+                        <img src="{{album.album_logo}}" class="img_responsive">
+                    </a>
+                    <div class="caption">
+                        <h2>{{album.album_title}}</h2>
+                        <h4>{{album.artist}}</h4>
+
+                        <!--view details-->
+                        <a href="{% url 'music:detail' album.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+                        <!--Album Delete-->
+                        <form action="{%  url 'music:album-delete' album.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="album.id" value="{{album.id}}"/>
+                            <button type="submit" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </form>
+
+                        <!--Album Favorite-->
+                        <a href="{% url 'music:album-favorite' album.id %}" class="btn btn-default btn-sm btn-favorite" role="button">
+                            <span class="glyphicon glyphicon-heart {% if  album.is_favorite %}active{%endif%}"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+        {% endfor %}
+    {% else %}
+        <div class="col-sm-12">
+            <br>
+            <a href="{% url 'music:album-add' %}">
+                <button type="button" class="btn btn-success btn-xs">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Album
+                </button>
+            </a>
+        </div>
+    {% endif %}
+
+    </div>
+</div>
+{%endblock%}

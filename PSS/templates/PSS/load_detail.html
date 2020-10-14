@@ -1,0 +1,186 @@
+{% extends 'PSS/base.html' %}
+{% block code %}
+
+<h1>Details for Load: {{load.load_name}} of Hub: {{hub.hub_name}}</h1>
+<span class="hub-display">
+    <div class="container">
+        <span class="inline-block" style="font-size: 35px;">{{load.load_name}}</span>
+        <span class="inline-block"><button style="font-size: 25px;">Edit Load Info</button></span>
+        <span class="inline-block"><button style="font-size: 25px;">Delete Load</button></span>
+    </div>
+</span>
+<span class="data-view">
+    <p style="font-size: 25px;">Generation and Consumption Data Presentation</p>
+    <span class="inline-block" style="font-size: 25px;">
+        <p>Select Presentation Method</p>
+        <button class="display-button" onclick="document.getElementById('year-form').style.display='block';document.getElementById('month-form').style.display='none';document.getElementById('day-form').style.display='none'">Annually Data</button>
+        <button class="display-button" onclick="document.getElementById('month-form').style.display='block';document.getElementById('year-form').style.display='none';document.getElementById('day-form').style.display='none'">Monthly Data</button>
+        <button class="display-button" onclick="document.getElementById('day-form').style.display='block';document.getElementById('year-form').style.display='none';document.getElementById('month-form').style.display='none'">Daily Data</button>
+    </span>
+    <span class="hidden-form-container">
+        <form action="{% url 'PSS:load-year-data' hub.hub_name load.load_name %}" method="post" id="year-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Year</p>
+            <select id="year" name="year" form="year-form">
+                {% for year in years %}
+                <option value="{{year}}">{{year}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;'  id="hub-year-data" name="submit" value="View Data">
+        </form>
+        <form action="{% url 'PSS:load-month-data' hub.hub_name load.load_name %}" method="post" id="month-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Year and Month</p>
+            <label for="month" style="font-size: 20px;">Month:</label>
+            <select id="month" name="month" form="month-form">
+                {% for month in months %}
+                <option value="{{month}}">{{month}}</option>
+                {% endfor %}
+            </select>
+            <label for="year-month" style="font-size: 20px;">Year:</label>
+            <select id="year-month" name="year-month" form="month-form">
+                {% for year in years %}
+                <option value="{{year}}">{{year}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;' id="hub-month-data" name="submit" value="View Data">
+        </form>
+        <form action="{% url 'PSS:load-day-data' hub.hub_name load.load_name %}" method="post" id="day-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Day</p>
+            <input type="date" id="day" name="day" min="min_date" max="max_date" style="font-size: 20px;">
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;' id="hub-day-data" name="submit" value="View Data">
+        </form>
+    </span>
+</span>
+
+<div class="chart-canvas" style="position:relative; top:500px; width:90%; left:50%; transform: translate(-50%);">
+    <div id="myChart"></div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+<script>
+var consumptionValues = {
+    'times':[],
+    'values':[]
+};
+
+$("#year-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+            console.log(consumptionValues);
+            buildChart("Annually Load Consumption - Data Presented After Each Month", consumptionValues.times, consumptionValues.values)
+        },
+    });
+});
+
+$("#month-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+            console.log(consumptionValues);
+            buildChart("Monthly Load Consumption - Data Presented After Each Day", consumptionValues.times, consumptionValues.values)
+        },
+    });
+});
+
+
+$("#day-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+            console.log(consumptionValues);
+            buildChart("Daily Load Consumption - Data Presented After Each Hour", consumptionValues.times, consumptionValues.values)
+        },
+    });
+});
+
+
+function buildChart(title, times_array, consumption_array){
+    var chartData = {
+        "type": "bar",
+        "title": {
+        "text": title
+        },
+        "plot": {
+        "background-color":"red",
+        "value-box": {
+          "text": "%v"
+        },
+        "tooltip": {
+          "text": "%v"
+        }
+        },
+
+        "scale-x": {
+            "values": times_array
+        },
+        "series": [
+            {
+              "values": consumption_array,
+              "text": "Loads Consumption"
+            }
+        ]
+    }
+
+    zingchart.render({
+    id: 'myChart',
+    data: chartData
+    });
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+body     {
+  background: white url("images/background.jpg") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+.navbar{
+border-radius: 0;
+}

@@ -1,0 +1,95 @@
+body{
+margin:0;
+padding:0;
+font-family: sans-serif;
+background: url("images/solarfarm.jpg");
+background-size: cover;
+}
+
+.signupbox{
+width: 420px;
+height: 660px;
+padding: 20px;
+position: relative;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: #FBFCFC;
+}
+
+h1{
+margin-bottom: 20px;
+text-align: center;
+font-size: 26px;
+}
+
+.box p{
+margin: 0;
+padding: 0;
+font-weight: bold;
+font-size: 18px;
+}
+
+.box input[type = "text"], .box input[type = "password"], .box  input[type = "email"]{
+    width: 100%;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 2px solid #2C3E50;
+    background: transparent;
+    height: 40px;
+    font-size: 18px;
+}
+
+.box input[type = "submit"]{
+    width: 100px;
+    height: 30px;
+    position: absolute;
+    top: 460px;
+    left: 50%;
+    transform: translate(-50%, -0%);
+    margin-bottom: 20px;
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+
+hr{
+width: 90%;
+position: absolute;
+top: 520px;
+left:50%;
+transform: translate(-50%);
+}
+
+#or{
+position: absolute;
+background: #FBFCFC;
+width: 30px;
+top: 520px;
+left:50%;
+transform: translate(-50%);
+font-weight: lighter;
+}
+
+ #login{
+ font-size: 18px;
+ width: 100%;
+ position: absolute;
+ top: 600px;
+ left: 50%;
+ text-align: center;
+ transform:translate(-50%);
+}
+
+label{
+margin: 10px;
+font-size: 18px;
+font-weight: bold;
+}
+
+select{
+font-size: 18px;
+font-weight: normal;
+}
+
+

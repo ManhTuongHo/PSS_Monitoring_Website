@@ -1,0 +1,57 @@
+body{
+margin:0;
+padding:0;
+font-family: sans-serif;
+background: url("images/payment_background.jpg");
+background-size: cover;
+}
+
+.StripeElement {
+  box-sizing: border-box;
+
+  height: 40px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+.form-container{
+width: 800px;
+height: 400px;
+padding: 30px;
+position: relative;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: #e6e6e6;
+}
+
+.thankyou-form{
+text-align: center;
+width: 800px;
+height: 300px;
+padding: 30px;
+position: relative;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: #e6e6e6;
+}

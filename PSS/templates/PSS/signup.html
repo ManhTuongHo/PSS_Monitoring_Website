@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Signup Form</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'PSS/signupstyle.css' %}" />
+</head>
+<body>
+    <div class="signupbox">
+        <h1>Signup for New User</h1>
+        <form class="box" action="" method="POST">
+            {% csrf_token %}
+            <p>Username</p>
+        <!--    <input type="text" name="" placeholder="Enter Username">  -->
+            {{form.username}}
+            <p>Password</p>
+<!--            <input type="password" name="" placeholder="Enter Password">-->
+            {{form.password1}}
+<!--            <input type="password" name="" placeholder="Re-enter Password">-->
+            {{form.password2}}
+            <p>Email</p>
+            {{form.email}}
+            <label>{{profile_form.area.label}}</label>
+            {{profile_form.area}}
+            {{form.errors}}
+            <input type="submit" name="" value="Signup">
+            <hr>
+            <p id="or" class="or">OR</p>
+            <a id="login" href="{%url 'PSS:login'%}">Already have an account? Login.</a>
+        </form>
+    </div>
+</body>
+</html>

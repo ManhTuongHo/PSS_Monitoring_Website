@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'PSS/style.css' %}" />
+    <style>
+    table{
+    border-collapse: collapse;
+    background: #ffffff;
+    }
+
+    th{
+    border: 2px solid #000000;
+    text-align: left;
+    font-size: 20px;
+    font-weight: bold;
+    }
+
+    td{
+    border: 1px solid #000000;
+    text-align: left;
+    font-size: 20px;
+    }
+    </style>
+</head>
+<body>
+<h1>Customers Energy Exchange and Payment Data</h1>
+{% for user in users%}
+<div>
+<button style="margin-top:10px; margin-bottom:10px; font-size: 20px; margin-left:10px;" onclick="">{{user.username}}</button>
+<div style="margin-left: 20px;">
+<span style="display:inline-block;">
+<table class="hidden-table">
+    <tr>
+        <th>Time</th>
+        <th>Contrib</th>
+        <th>Consume</th>
+        <th>Contrib to System</th>
+        <th>Consume from System</th>
+    </tr>
+    {% for exchange in user.powerexchange_set.all %}
+    <tr>
+        <td>{{exchange.year}}/{{exchange.month}}</td>
+        <td>{{exchange.contrib}}</td>
+        <td>{{exchange.consume}}</td>
+        <td>{{exchange.contrib_amount_system}}</td>
+        <td>{{exchange.consume_amount_system}}</td>
+    </tr>
+    {% endfor %}
+</table>
+</span>
+<span style="display:inline-block;">
+<table class="hidden-table">
+    <tr>
+        <th>System Payback</th>
+        <th>Centralized Power Payment</th>
+        <th>Status</th>
+    </tr>
+    {% for payment in user.paymentstatus_set.all %}
+    <tr>
+        {% if payment.earn_or_pay %}
+        <td>+ {{payment.amount}}</td>
+        {% else %}
+        <td>- {{payment.amount}}</td>
+        {% endif %}
+        <td>- {{payment.pay_centre}}</td>
+        {% if payment.status %}
+        <td>Completed</td>
+        {% else %}
+        <td>Incomplete</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+</span>
+</div>
+</div>
+{% endfor %}
+</body>
+</html>

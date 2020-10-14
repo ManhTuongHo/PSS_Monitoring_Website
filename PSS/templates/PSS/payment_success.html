@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>payment successful</title>
+    {% load static %}
+    <link rel="stylesheet" href= "{% static 'PSS/paymentstyle.css' %}" />
+</head>
+<body>
+    <div class="thankyou-form">
+        <p style="font-size: 25px; margin-bottom: 30px;">Your payment has been successfully processed! Thank You for joining our system</p>
+        <img src="https://p7.hiclipart.com/preview/664/794/477/computer-icons-check-mark-desktop-wallpaper-green-tick.jpg" style="background:#e6e6e6;" alt="tick" width="50" height=50">
+        <p style="font-size: 25px; margin-bottom: 30px;">You have paid {{amount}}aud energy fee</p>
+        <button style="font-size:20px; background-color:#cccccc;" onclick="window.location.href='{% url 'PSS:home'%}'">Go back to Homepage</button>
+    </div>
+</body>
+</html>

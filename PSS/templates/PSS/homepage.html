@@ -1,0 +1,146 @@
+{% extends 'PSS/base.html' %}
+{% block title %}PSS HomePage{%endblock%}
+{% block code %}
+<h1>{{user.username}}'s Homepage. Wellcome to PSS Monitoring Website</h1>
+
+<script>
+function load_get_hub(hubName){
+document.getElementById("load_hub_name").value = hubName;
+}
+
+function panel_get_hub(hubName){
+document.getElementById("panel_hub_name").value = hubName;
+}
+</script>
+
+<div class="boxed">
+    <h2>Hubs Information</h2>
+    {% for hub in user.hub_set.all %}
+        <span class="group-inline">
+           <button onclick="window.location.href='{% url 'PSS:hub-detail' hub.hub_name %}'" type="button" class="hub-block inline">
+               {{hub.hub_name}}
+           </button>
+            <span class="inline">
+                <p style="font-size:25px;">{{hub.load_set.all.count}} Loads</p><br>
+                <p style="font-size:25px;">{{hub.panel_set.all.count}} PV Panels</p>
+            </span>
+            <span class="inline">
+                <button onclick="document.getElementById('load_form_modal').style.display='block'; load_get_hub('{{hub.hub_name}}')" class="comp-button" style="background:tomato;">Add Load</button>
+                <button onclick="document.getElementById('panel_form_modal').style.display='block'; panel_get_hub('{{hub.hub_name}}')" class="comp-button" style="background:cyan;">Add PV Panel</button>
+            </span>
+        </span>
+    {% endfor %}
+    <br>
+    <button onclick="document.getElementById('hub_form_modal').style.display='block'" class="create_button">Add a New Hub to your System</button>
+
+</div>
+
+<div class="boxed">
+    <h2>Power Exchange and Payment Information</h2>
+
+    <div class="inner-box">
+        <div class="box-header" style="background-color: #cccccc; position: relative; bottom: 20px; height: 50px; border-width: 1px; border-color:#d9d9d9;">
+            <h3 style="font-size: 30px; position: relative; top: 5px; left: 20px;">Power Exchanging Status</h3>
+        </div>
+        <p style="font-size: 25px; margin-left: 20px;">Accumulative Excessive Generation: {{excessive_generation}}</p>
+        <p style="font-size: 25px; margin-left: 20px;">Over Consumption (Monthly):</p>
+        <div style="font-size: 25px; margin-left: 20px;">
+            {% if not exchange_array %}
+            <p>You Have No Unpaid Over Consumption</p>
+            {% else %}
+            {% for exchange in exchange_array %}
+            <label>{{exchange.year}}/{{exchange.month}}:</label>
+            <p>Total Over Consumption: {{exchange.consume}}</p>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div  class="inner-box">
+        <div class="box-header" style="background-color: #cccccc; position: relative; bottom: 20px; height: 50px; border-width: 1px; border-color:#d9d9d9;">
+            <h3 style="font-size: 30px; position: relative; top: 5px; left: 20px;">Fee and Payment</h3>
+        </div>
+        <p style="font-size: 25px; margin-left: 20px;">Current Outstanding Balance:</p>
+        <div style="font-size: 25px; margin-left: 20px;">
+            {% if not payment_array %}
+            <p>You Have No Outstanding Balance</p>
+            {% else %}
+            {% for payment in payment_array %}
+            <label>{{payment.year}}/{{payment.month}}:</label>
+            {% if payment.earn_or_pay == False %}
+            <p>Sharing PSS Fee: ${{payment.amount}}</p>
+            {% endif %}
+            {% if payment.pay_centre > 0 %}
+            <p>Centralized Consumption Fee: ${{payment.pay_centre}}</p>
+            {% endif %}
+            {% endfor %}
+            <p>Total Outstanding Amount: {{total_fee}}</p>
+            {% endif %}
+        </div>
+        <button type="button" style="font-size: 30px; position: relative; left: 50%; transform: translate(-50%); border-width: 1px; border-color:#333333;" onclick="window.location.href='{% url 'PSS:payment' total_fee %}'">Complete your payment</button>
+    </div>
+
+    <button type="button" onclick="" style="font-size:30px; position: relative; left: 50%; transform: translate(-50%); background: #666666; color: #ffffff; margin-top: 10px;">View payment history</button>
+</div>
+
+<div id="hub_form_modal" class="form_modal">
+    <div class="modal_content" style="height:300px">
+        <div class="container">
+            <span onclick="document.getElementById('hub_form_modal').style.display='none'" class="close_button">&times;</span>
+            <h3>Hub Creating Form</h3>
+            <div class="form_container">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p>Enter your Hub Name</p>
+    <!--                <input type="text" name="hubname">-->
+                    {{hub_form.hub_name}}
+                    <input type="submit" name="" class="submit-button" value="Create">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="load_form_modal" class="form_modal">
+    <div class="modal_content" style="height:450px;">
+        <div class="container">
+            <span onclick="document.getElementById('load_form_modal').style.display='none'" class="close_button">&times;</span>
+            <h3>Load Specification</h3><br>
+            <div class="form_container">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p>Enter Name of Load</p>
+                    {{load_form.load_name}}
+                    <label>{{load_form.essential.label}}</label>
+                    {{load_form.essential}}
+                    <input type="hidden" name="load_hub_name" id="load_hub_name" value="">
+                    <input type="submit" name="" class="submit-button" value="Add Load">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="panel_form_modal" class="form_modal">
+    <div class="modal_content" style="height:450px;">
+        <div class="container">
+            <span onclick="document.getElementById('panel_form_modal').style.display='none'" class="close_button">&times;</span>
+            <h3>PV Panel Specification</h3><br>
+            <div class="form_container">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p>Enter name for the PV panel system</p>
+                    {{panel_form.panel_name}}
+                    <p>Enter Power Rating of your PV Panel (in kW)</p>
+                    {{panel_form.rated_power}}
+                    <input type="hidden" name="panel_hub_name" id="panel_hub_name" value="">
+                    <input type="submit" name="" class="submit-button" value="Add Panel">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

@@ -1,0 +1,291 @@
+{% extends 'PSS/base.html' %}
+{% block code %}
+
+<h1>Details for Hub: {{hub.hub_name}}</h1>
+<span class="hub-display">
+    <div class="container">
+        <span class="inline-block" style="font-size: 35px;">{{hub.hub_name}}</span>
+        <span class="inline-block"><button style="font-size: 25px;">Edit Hub Info</button></span>
+        <span class="inline-block"><button style="font-size: 25px;">Delete Hub</button></span>
+    </div>
+    <div class="container">
+        <span class="inline-block" style="margin-right:20px; display: inline-block;">
+            <h3>List of Loads</h3>
+            {% for load in hub.load_set.all %}
+            <div>
+                <a href="{% url 'PSS:load-detail' hub.hub_name load.load_name %}" style="font-size: 20px;">{{load.load_name}}</a>
+                <a href="{% url 'PSS:load-delete' hub.hub_name load.load_name %}" style="font-size: 20px;">&#10006</a>
+            </div>
+            {% endfor %}
+            <button onclick="document.getElementById('load_form_modal').style.display='block'; load_get_hub('{{hub.hub_name}}')" class="comp-button" style="background:tomato;">Add Load</button>
+        </span>
+        <span class="inline-block" style="margin-right: 20px; display: inline-block;">
+            <h3>List of Panels</h3>
+            {% for panel in hub.panel_set.all %}
+            <div>
+                <a href="{% url 'PSS:panel-detail' hub.hub_name panel.panel_name %}" style="font-size: 20px;">{{panel.panel_name}}</a>
+                <a href="{% url 'PSS:panel-delete' hub.hub_name panel.panel_name %}" style="font-size: 20px;">&#10006</a>
+            </div>
+            {% endfor %}
+            <button onclick="document.getElementById('panel_form_modal').style.display='block'; panel_get_hub('{{hub.hub_name}}')" class="comp-button" style="background:cyan;">Add PV Panel</button>
+        </span>
+    </div>
+</span>
+<span class="data-view">
+    <p style="font-size: 25px;">Generation and Consumption Data Presentation</p>
+    <span class="inline-block" style="font-size: 25px;">
+        <p>Select Presentation Method</p>
+        <button class="display-button" onclick="document.getElementById('year-form').style.display='block';document.getElementById('month-form').style.display='none';document.getElementById('day-form').style.display='none'">Annually Data</button>
+        <button class="display-button" onclick="document.getElementById('month-form').style.display='block';document.getElementById('year-form').style.display='none';document.getElementById('day-form').style.display='none'">Monthly Data</button>
+        <button class="display-button" onclick="document.getElementById('day-form').style.display='block';document.getElementById('year-form').style.display='none';document.getElementById('month-form').style.display='none'">Daily Data</button>
+    </span>
+    <span class="hidden-form-container">
+        <form action="{% url 'PSS:hub-year-data' hub.hub_name %}" method="post" id="year-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Year</p>
+            <select id="year" name="year" form="year-form">
+                {% for year in years %}
+                <option value="{{year}}">{{year}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;'  id="hub-year-data" name="submit" value="View Data">
+        </form>
+        <form action="{% url 'PSS:hub-month-data' hub.hub_name %}" method="post" id="month-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Year and Month</p>
+            <label for="month" style="font-size: 20px;">Month:</label>
+            <select id="month" name="month" form="month-form">
+                {% for month in months %}
+                <option value="{{month}}">{{month}}</option>
+                {% endfor %}
+            </select>
+            <label for="year-month" style="font-size: 20px;">Year:</label>
+            <select id="year-month" name="year-month" form="month-form">
+                {% for year in years %}
+                <option value="{{year}}">{{year}}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;' id="hub-month-data" name="submit" value="View Data">
+        </form>
+        <form action="{% url 'PSS:hub-day-data' hub.hub_name %}" method="post" id="day-form" class="hidden-form">
+            {% csrf_token %}
+            <p>Select Day</p>
+            <input type="date" id="day" name="day" min="min_date" max="max_date" style="font-size: 20px;">
+            <input type="submit" style='background-color:  #2eb82e; font-size: 18px;' id="hub-day-data" name="submit" value="View Data">
+        </form>
+    </span>
+</span>
+
+<div class="chart-canvas" style="position:relative; top:500px; width:90%; left:50%; transform: translate(-50%);">
+    <div id="myChart"></div>
+</div>
+
+<div id="load_form_modal" class="form_modal">
+    <div class="modal_content" style="height:330px;">
+        <div class="container">
+            <span onclick="document.getElementById('load_form_modal').style.display='none'" class="close_button">&times;</span>
+            <h3>Load Specification</h3><br>
+            <div class="form_container">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p>Enter Name of Load</p>
+                    {{load_form.load_name}}
+                    <label>{{load_form.essential.label}}</label>
+                    {{load_form.essential}}
+                    <input type="hidden" name="load_hub_name" id="load_hub_name" value="">
+                    <input type="submit" name="" class="submit-button" value="Add Load">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="panel_form_modal" class="form_modal">
+    <div class="modal_content" style="height:330px;">
+        <div class="container">
+            <span onclick="document.getElementById('panel_form_modal').style.display='none'" class="close_button">&times;</span>
+            <h3>PV Panel Specification</h3><br>
+            <div class="form_container">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <p>Enter name for the PV panel system</p>
+                    {{panel_form.panel_name}}
+                    <p>Enter Power Rating of your PV Panel (in kW)</p>
+                    {{panel_form.rated_power}}
+                    <input type="hidden" name="panel_hub_name" id="panel_hub_name" value="">
+                    <input type="submit" name="" class="submit-button" value="Add Panel">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+<script>
+var consumptionValues = {
+    'times':[],
+    'values':[]
+};
+
+var generationValues = {
+    'times':[],
+    'values':[]
+};
+
+$("#year-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            generationValues.times = [];
+            generationValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+
+            for (var i=0; i < Object.keys(results[1]).length; i++){
+                var time = Object.keys(results[1])[i]
+                var value = Object.values(results[1])[i]
+
+                generationValues.times.push(time);
+                generationValues.values.push(value);
+            }
+            console.log(consumptionValues, generationValues);
+            buildChart("Annually Chart - Data Presented After Each Month", consumptionValues.times,  generationValues.values, consumptionValues.values)
+        },
+    });
+});
+
+$("#month-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            generationValues.times = [];
+            generationValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+
+            for (var i=0; i < Object.keys(results[1]).length; i++){
+                var time = Object.keys(results[1])[i]
+                var value = Object.values(results[1])[i]
+
+                generationValues.times.push(time);
+                generationValues.values.push(value);
+            }
+            console.log(consumptionValues, generationValues);
+            buildChart("Monthly Chart - Data Presented After Each Day", consumptionValues.times, generationValues.values, consumptionValues.values)
+        },
+    });
+});
+
+
+$("#day-form").submit(function(e){
+    e.preventDefault();
+
+    var form = $(this);
+    var url = form.attr("action");
+
+    $.ajax({
+        method:'POST',
+        url: url,
+        data: form.serialize(),
+        success: function(results){
+            console.log('RESPONSE: ',results);
+            consumptionValues.times = [];
+            consumptionValues.values = [];
+            generationValues.times = [];
+            generationValues.values = [];
+            for (var i=0; i < Object.keys(results[0]).length; i++){
+                var time = Object.keys(results[0])[i]
+                var value = Object.values(results[0])[i]
+
+                consumptionValues.times.push(time);
+                consumptionValues.values.push(value);
+            }
+
+            for (var i=0; i < Object.keys(results[1]).length; i++){
+                var time = Object.keys(results[1])[i]
+                var value = Object.values(results[1])[i]
+
+                generationValues.times.push(time);
+                generationValues.values.push(value);
+            }
+            console.log(consumptionValues, generationValues);
+            buildChart("Daily Chart - Data Presented After Each Hour", consumptionValues.times, generationValues.values, consumptionValues.values)
+        },
+    });
+});
+
+
+function buildChart(title, times_array, generation_array, consumption_array){
+    var chartData = {
+        "type": "bar",
+        "title": {
+        "text": title
+        },
+        "plot": {
+        "value-box": {
+          "text": "%v"
+        },
+        "tooltip": {
+          "text": "%v"
+        }
+        },
+        "legend": {
+        "header": {
+          "text": "Legend Header"
+        },
+        },
+        "scale-x": {
+            "values": times_array
+        },
+        "series": [
+            {
+              "values": generation_array,
+              "text": "PV Generation"
+            },
+            {
+              "values": consumption_array,
+              "text": "Loads Consumption"
+            }
+        ]
+    }
+
+    zingchart.render({
+    id: 'myChart',
+    data: chartData
+    });
+}
+
+</script>
+{% endblock %}
